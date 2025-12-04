@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="EspaçoGo - Encontre e alugue espaços para eventos, reuniões e hospedagens em Goiânia. Plataforma completa com avaliações e favoritos.">
+    <meta name="keywords" content="espaços para eventos, aluguel de salas, reuniões, hospedagem, Goiânia, eventos corporativos, eventos sociais">
+    <meta name="author" content="Leonardo Brito">
+    <meta name="theme-color" content="#2563eb">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://espacogo.com.br">
+    <meta property="og:title" content="EspaçoGo - Espaços para Eventos e Reuniões">
+    <meta property="og:description" content="Encontre o espaço perfeito para seu evento em Goiânia">
+    <meta property="og:image" content="https://espacogo.com.br/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="EspaçoGo - Espaços para Eventos">
+    <meta property="twitter:description" content="Encontre o espaço perfeito para seu evento em Goiânia">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <title>EspaçoGo - Espaços para Eventos e Reuniões em Goiânia</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Carregando...</p>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar" role="navigation" aria-label="Navegação principal">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="#" class="navbar-brand" onclick="navigate('home'); return false;" aria-label="Ir para página inicial">
+                    <h1 class="logo">Espaço<span>Go</span></h1>
+                </a>
+
+                <div class="navbar-right">
+                    <div id="userMenu" class="user-menu" style="display: none;">
+                        <span class="user-name" id="userName"></span>
+                        <button onclick="navigate('dashboard')" class="btn-icon-nav" aria-label="Meus espaços" title="Meus Espaços">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                        <button onclick="navigate('favorites')" class="btn-icon-nav" aria-label="Favoritos" title="Favoritos">
+                            <i class="fas fa-heart"></i>
+                            <span id="favCount" class="badge-count">0</span>
+                        </button>
+                        <button onclick="navigate('profile')" class="btn-icon-nav" aria-label="Perfil" title="Meu Perfil">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <button onclick="toggleTheme()" class="btn-icon-nav" aria-label="Alternar tema" title="Alternar Tema">
+                            <i class="fas fa-moon" id="themeIcon"></i>
+                        </button>
+                        <button onclick="logout()" class="btn-logout">
+                            <i class="fas fa-sign-out-alt"></i> Sair
+                        </button>
+                    </div>
+
+                    <div id="guestMenu" class="guest-menu">
+                        <button onclick="toggleTheme()" class="btn-icon-nav" aria-label="Alternar tema" title="Alternar Tema">
+                            <i class="fas fa-moon" id="themeIcon2"></i>
+                        </button>
+                        <button onclick="navigate('login')" class="btn-login">
+                            <i class="fas fa-sign-in-alt"></i> Entrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="content">
+        <!-- O conteúdo será carregado dinamicamente aqui -->
+    </main>
+
+    <!-- Modal para Detalhes do Espaço -->
+    <div id="modalDetalhes" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+        <div class="modal-overlay" onclick="fecharModal()"></div>
+        <div class="modal-content modal-large">
+            <button class="modal-close" onclick="fecharModal()" aria-label="Fechar modal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="modalConfirm" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-overlay" onclick="fecharConfirm()"></div>
+        <div class="modal-content modal-small">
+            <h3 id="confirmTitle">Confirmar ação</h3>
+            <p id="confirmMessage"></p>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="fecharConfirm()">Cancelar</button>
+                <button class="btn-danger" id="confirmBtn">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>EspaçoGo</h3>
+                    <p>A plataforma completa para encontrar e anunciar espaços para eventos, reuniões e hospedagens em Goiânia.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook" title="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="Twitter" title="Twitter"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="#" onclick="navigate('home'); return false;">Início</a></li>
+                        <li><a href="#" onclick="navigate('login'); return false;">Entrar</a></li>
+                        <li><a href="#" onclick="navigate('register'); return false;">Cadastrar</a></li>
+                        <li><a href="#" onclick="navigate('about'); return false;">Sobre Nós</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Categorias</h4>
+                    <ul>
+                        <li><a href="#" onclick="navigate('home'); setTimeout(() => filtrarEspacos('corporativo'), 100); return false;">Eventos Corporativos</a></li>
+                        <li><a href="#" onclick="navigate('home'); setTimeout(() => filtrarEspacos('social'), 100); return false;">Eventos Sociais</a></li>
+                        <li><a href="#" onclick="navigate('home'); setTimeout(() => filtrarEspacos('reuniao'), 100); return false;">Reuniões</a></li>
+                        <li><a href="#" onclick="navigate('home'); setTimeout(() => filtrarEspacos('hospedagem'), 100); return false;">Hospedagem</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> contato@espacogo.com.br</li>
+                        <li><i class="fas fa-phone"></i> (62) 3000-0000</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Goiânia - GO</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 EspaçoGo. Todos os direitos reservados. | Desenvolvido com ❤️ por <strong>Leonardo Brito</strong></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
